@@ -6,6 +6,8 @@
 package analizador.lexico.v2;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -107,25 +109,6 @@ public class Analizador extends javax.swing.JFrame {
         DefaultTableModel tableModel = new DefaultTableModel(columnNames,0);
         String[] temp = ogString.split(" ");
         
-       /* ArrayList<String> instructions = new ArrayList<>();
-        
-        for (String word : temp) {
-            if(!word.equalsIgnoreCase(" ") && !word.equalsIgnoreCase("")){
-                instructions.add(word);
-                instructions.add(".");
-            }
-        }
-       
-        ArrayList<String> words = new ArrayList<>();
-        
-        for (String instruction : instructions) {
-            String[] temp2 = instruction.split(" ");
-            for (String string : temp2) {
-                if(!string.equalsIgnoreCase(" ") && !string.equalsIgnoreCase(""))
-                    words.add(string);
-            }
-        }*/
-        
         for (String word : temp) {
             if(!word.equals("") && !word.equals(" ")){
                 System.out.println(word);
@@ -137,6 +120,8 @@ public class Analizador extends javax.swing.JFrame {
                 else
                     reviewed.setTipo("Identificador");
                 hasError(word);
+                checkRegex(word);
+                
 
                 if(!error){
                     String temp2 = word.replace("\\.", "");
@@ -159,7 +144,23 @@ public class Analizador extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton1ActionPerformed
     
+    public void checkRegex(String identifier){
+        Pattern pat = Pattern.compile("^[^\\d].*");
+        Matcher mat = pat.matcher(identifier);
+        System.out.println(identifier);
+        
+        if (mat.matches()) {
+            System.out.println("Funciona");
+        } else {
+            error = true;
+            Palabras word =  new Palabras();
+            word.setPalabra(identifier);
+            word.setTipo("Error");
+            cosas.add(word);
+        }
     
+    
+    }
 
     
     
@@ -178,7 +179,7 @@ public class Analizador extends javax.swing.JFrame {
         
         for (char c : arr) {
             Palabras xd = new Palabras();
-            if(!Character.isAlphabetic(c) && c != ',' && c != '.'){
+            if(!Character.isAlphabetic(c) && c != ',' && c != '.' && !Character.isDigit(c)){
                 xd.setPalabra(c+"");
                 xd.setTipo("Error");
                 cosas.add(xd);
